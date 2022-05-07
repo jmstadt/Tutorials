@@ -1,0 +1,26 @@
+CXX             ?= g++
+CXXFLAGS        ?= -Werror -Wall -Wmissing-declarations -Wpointer-arith \
+					 -Wwrite-strings -Wcast-qual -Wcast-align -Wformat-security \
+					 -Wformat-nonliteral -Wmissing-format-attribute -Winline \
+					 -pedantic-errors -fstack-protector-all -D_FORTIFY_SOURCE=2 \
+					 -fPIC -std=c++11 -pthread
+
+IMPR_DIR        ?= ../v1
+BWCA_DIR  ?= ../v2
+
+GENERICAPI_DIR   = $(IMPR_DIR)/pkg_deps/genericapi
+
+INCLUDES         = -I$(GENERICAPI_DIR)/include -I$(IMPR_DIR)/include \
+				   -I$(BWCA_DIR)/include -Iinclude
+
+LIBS             = $(IMPR_DIR)/build/libs/libtangramgeneric.a \
+				   $(BWCA_DIR)/build/libs/libtangramgeneric.a \
+				   $(GENERICAPI_DIR)/build/libs/libtangramgenericapi.a
+
+all: test_lib
+
+test_lib: golfcart_msg_simple_function.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -shared -o libgolfcartmsg.so golfcart_msg_simple_function.cpp gen/BWCAfromIMPRgivenDSLC.cpp gen/my_transform.cpp $(LIBPATHS) $(LIBS)
+
+clean:
+	@rm -f libmoviesmsg.so
